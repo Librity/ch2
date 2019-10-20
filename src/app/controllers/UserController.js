@@ -2,15 +2,58 @@ import * as Yup from 'yup';
 import User from '../models/User';
 
 class UserController {
-  async store(req, res) {
+  async index(req, res) {
+    let getAllUsers;
+
+    if (req.isAdmin) {
+      getAllUsers = await User.findAll({
+        attributes: ['id', 'name', 'email', 'admin', 'createdAt', 'updatedAt'],
+      });
+    } else {
+      getAllUsers = await User.findAll({
+        attributes: ['id', 'name', 'email', 'createdAt'],
+      });
+    }
+
+    return res.json(getAllUsers);
+  }
+
+  async show(req, res) {
+    const { id } = req.params;
+    let findUserById;
+
+    if (req.isAdmin) {
+      findUserById = await User.findOne({
+        where: { id },
+        attributes: ['id', 'name', 'email', 'admin', 'createdAt', 'updatedAt'],
+      });
+    } else {
+      findUserById = await User.findOne({
+        where: { id },
+        attributes: ['id', 'name', 'email', 'createdAt'],
+      });
+    }
+
+    if (!findUserById) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    return res.json(findUserById);
+  }
+
+  async create(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string()
         .email()
         .required(),
+      admin: Yup.boolean(),
       password: Yup.string()
         .required()
         .min(6),
+      passwordConfirmation: Yup.string().when('password', (password, field) =>
+        password ? field.required().oneOf([Yup.ref('password')]) : field
+      ),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -23,12 +66,12 @@ class UserController {
       return res.status(400).json({ error: 'User already exists.' });
     }
 
-    const { id, name, email, provider } = await User.create(req.body);
+    const { id, name, email, admin } = await User.create(req.body);
 
-    return res.json({ id, name, email, provider });
+    return res.json({ id, name, email, admin });
   }
 
-  async update(req, res) {
+  async updateSelf(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
@@ -38,9 +81,10 @@ class UserController {
         .when('oldPassword', (oldPassword, field) =>
           oldPassword ? field.required() : field
         ),
-      confirmPassword: Yup.string().when('password', (password, field) =>
+      passwordConfirmation: Yup.string().when('password', (password, field) =>
         password ? field.required().oneOf([Yup.ref('password')]) : field
       ),
+      admin: Yup.boolean().notOneOf([true]),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -57,7 +101,7 @@ class UserController {
       });
 
       if (userExists) {
-        return res.status(400).json({ error: 'User already exists.' });
+        return res.status(400).json({ error: 'Email already in use.' });
       }
     }
 
@@ -65,9 +109,60 @@ class UserController {
       return res.status(401).json({ error: 'Password does not match.' });
     }
 
-    const { id, name, provider } = await user.update(req.body);
+    const { id, name } = await user.update(req.body);
 
-    return res.json({ id, name, email, provider });
+    return res.json({ id, name, email });
+  }
+
+  async update(req, res) {
+    const bodySchema = Yup.object().shape({
+      name: Yup.string(),
+      email: Yup.string().email(),
+      admin: Yup.boolean(),
+      password: Yup.string().min(6),
+    });
+
+    if (!(await bodySchema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed.' });
+    }
+
+    const { email } = req.body;
+
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    if (email !== user.email) {
+      const userExists = await User.findOne({
+        where: { email },
+      });
+
+      if (userExists) {
+        return res.status(400).json({ error: 'Email already in use.' });
+      }
+    }
+
+    const { id, name, admin } = await user.update(req.body);
+
+    return res.json({ id, name, email, admin });
+  }
+
+  async destroy(req, res) {
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(404).json('User not found.');
+    }
+
+    await User.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    return res.json({ user });
   }
 }
 
