@@ -19,15 +19,15 @@ class Student extends Model {
 
     this.addHook('beforeSave', async student => {
       if (student.weight_metric) {
-        student.weight_imperial = Math.round(student.weight_metric * 2.205);
+        student.weight_imperial = student.weight_metric * 2.205;
       } else if (student.weight_imperial) {
-        student.weight_metric = Math.round(student.weight_imperial * 0.454);
+        student.weight_metric = student.weight_imperial * 0.454;
       }
 
-      if (student.height_metric_meters && student.height_metric_centimeters) {
-        student.height_imperial = Math.round(student.height_metric_meters * 2.205 + );
+      if (student.height_metric) {
+        student.height_imperial = student.height_metric * 3.281;
       } else if (student.height_imperial) {
-        student.weight_metric = Math.round(student.weight_imperial * 0.454);
+        student.height_metric = student.height_imperial * 0.305;
       }
     });
 

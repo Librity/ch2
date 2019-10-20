@@ -20,27 +20,20 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+
       weight_metric: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+        type: Sequelize.FLOAT,
       },
       weight_imperial: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
       },
-      height_metric_meters: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+      height_metric: {
+        type: Sequelize.FLOAT,
       },
-      height_metric_centimeters: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+      height_imperial: {
+        type: Sequelize.FLOAT,
       },
-      height_imperial_feet: {
-        type: Sequelize.INTEGER,
-      },
-      height_imperial_inches: {
-        type: Sequelize.INTEGER,
-      },
+
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
