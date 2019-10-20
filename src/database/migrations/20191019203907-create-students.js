@@ -31,11 +31,14 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      height_metric_feet: {
+      height_metric_centimeters: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      height_imperial: {
+      height_imperial_feet: {
+        type: Sequelize.INTEGER,
+      },
+      height_imperial_inches: {
         type: Sequelize.INTEGER,
       },
       created_at: {
