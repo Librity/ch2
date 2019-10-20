@@ -1,53 +1,146 @@
-// import * as Yup from 'yup';
+import * as Yup from 'yup';
 
 import Student from '../models/Student';
 
 class StudentController {
   async index(req, res) {
-    const students = await Student.findAll({
-      attributes: [
-        'id',
-        'name',
-        'email',
-        'age',
-        'weight_metric',
-        'weight_imperial',
-        'height_metric',
-        'height_imperial',
-        'createdAt',
-        'updatedAt',
-      ],
-    });
+    const getAllStudents = await Student.findAll();
 
-    return res.json(students);
+    return res.json(getAllStudents);
   }
 
-  //   async show(req, res) {
-  //     return res.json(findUserById);
-  //   }
+  async show(req, res) {
+    const findStudentById = await Student.findOne({
+      where: { id: req.params.id },
+    });
 
-  //   async create(req, res) {
-  //   }
+    if (!findStudentById) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
 
-  //   async updateSelf(req, res) {
-  //     }
+    return res.json(findStudentById);
+  }
 
-  //     if (oldPassword && !(await user.checkPassword(oldPassword))) {
-  //       return res.status(401).json({ error: 'Password does not match.' });
-  //     }
+  async create(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string()
+        .email()
+        .required(),
+      date_of_birth: Yup.date().required(),
+      weight_metric: Yup.number(),
+      height_metric: Yup.number(),
+      weight_imperial: Yup.number(),
+      height_imperial: Yup.number(),
+    });
 
-  //     const { id, name } = await user.update(req.body);
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed.' });
+    }
 
-  //     return res.json({ id, name, email });
-  //   }
+    const studentExists = await Student.findOne({
+      where: { email: req.body.email },
+    });
 
-  //   async update(req, res) {
-  //   }
+    if (studentExists) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
 
-  //   async destroy(req, res) {
+    const {
+      id,
+      name,
+      email,
+      date_of_birth,
+      age,
+      weight_metric,
+      weight_imperial,
+      height_metric,
+      height_imperial,
+    } = await Student.create(req.body);
 
-  //     return res.json({ user });
-  //   }
+    return res.json({
+      id,
+      name,
+      email,
+      date_of_birth,
+      age,
+      weight_metric,
+      weight_imperial,
+      height_metric,
+      height_imperial,
+    });
+  }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string(),
+      email: Yup.string().email(),
+      date_of_birth: Yup.date(),
+      weight_metric: Yup.number(),
+      height_metric: Yup.number(),
+      weight_imperial: Yup.number(),
+      height_imperial: Yup.number(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed.' });
+    }
+
+    let { email } = req.body;
+
+    const student = await Student.findByPk(req.params.id);
+
+    if (!student) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    if (email && email !== student.email) {
+      const studentExists = await Student.findOne({
+        where: { email },
+      });
+
+      if (studentExists) {
+        return res.status(400).json({ error: 'Email already in use.' });
+      }
+    } else {
+      email = student.email;
+    }
+
+    const {
+      id,
+      name,
+      date_of_birth,
+      age,
+      weight_metric,
+      weight_imperial,
+      height_metric,
+      height_imperial,
+    } = await student.update(req.body);
+
+    return res.json({
+      id,
+      name,
+      email,
+      date_of_birth,
+      age,
+      weight_metric,
+      weight_imperial,
+      height_metric,
+      height_imperial,
+    });
+  }
+
+  async destroy(req, res) {
+    const student = await Student.findByPk(req.params.id);
+
+    if (!student) {
+      return res.status(404).json({ erro: 'Student not found.' });
+    }
+
+    await Student.destroy({ where: { id: req.params.id } });
+
+    return res.json(student);
+  }
 }
 
 export default new StudentController();
