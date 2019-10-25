@@ -3,6 +3,7 @@ import { Router } from 'express';
 import UserController from './app/controllers/UserController';
 import SessionsController from './app/controllers/SessionController';
 import StudentController from './app/controllers/StudentController';
+import PlanController from './app/controllers/PlanController';
 
 import authMiddleware from './app/middlewares/auth';
 import isAdminMiddleware from './app/middlewares/isAdmin';
@@ -27,5 +28,10 @@ routes.delete('/users/:id', UserController.destroy);
 routes.post('/students', StudentController.create);
 routes.put('/students/:id', StudentController.update);
 routes.delete('/students/:id', StudentController.destroy);
+
+routes.get('/users', PlanController.index);
+routes.post('/users', PlanController.create);
+routes.put('/users/:id', PlanController.update);
+routes.delete('/users/:id', PlanController.destroy);
 
 export default routes;
