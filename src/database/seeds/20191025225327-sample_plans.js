@@ -5,6 +5,7 @@ module.exports = {
       [
         {
           title: 'Silver',
+          symbol: '🥈',
           duration: 1,
           price: 129.99,
           created_at: new Date(),
@@ -12,6 +13,7 @@ module.exports = {
         },
         {
           title: 'Gold',
+          symbol: '🏆',
           duration: 3,
           price: 109.99,
           created_at: new Date(),
@@ -19,6 +21,7 @@ module.exports = {
         },
         {
           title: 'Diamond',
+          symbol: '💎',
           duration: 6,
           price: 89.99,
           created_at: new Date(),

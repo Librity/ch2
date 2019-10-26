@@ -1,9 +1,13 @@
-// import { Op } from 'sequelize';
 import * as Yup from 'yup';
 
 import Student from '../models/Student';
 import Plan from '../models/Plan';
 import Membership from '../models/Membership';
+
+import MembershipCreationMail from '../jobs/MembershipCreationMail';
+import MembershipUpdateMail from '../jobs/MembershipUpdateMail';
+import MembershipCancellationMail from '../jobs/MembershipCancellationMail';
+import Queue from '../../lib/Queue';
 
 class PlanController {
   async index(req, res) {
@@ -35,7 +39,7 @@ class PlanController {
 
     const schema = Yup.object().shape({
       plan_id: Yup.number().required(),
-      start_date: Yup.number(),
+      start_date: Yup.date(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -52,13 +56,35 @@ class PlanController {
       req.body.start_date = new Date();
     }
 
-    const newMembership = await Membership.create({
+    let newMembership = await Membership.create({
       student_id: req.params.student_id,
       plan_id: req.body.plan_id,
+      temp_plan_id: req.body.plan_id,
       start_date: req.body.start_date,
     });
 
-    // email to student informing membership
+    newMembership = await Membership.findByPk(newMembership.id, {
+      where: {
+        student_id: req.params.student_id,
+        plan_id: req.body.plan_id,
+      },
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'symbol', 'duration', 'price'],
+        },
+      ],
+    });
+
+    await Queue.add(MembershipCreationMail.key, {
+      newMembership,
+    });
 
     return res.json(newMembership);
   }
@@ -72,7 +98,7 @@ class PlanController {
 
     const schema = Yup.object().shape({
       plan_id: Yup.number().required(),
-      start_date: Yup.number(),
+      start_date: Yup.date(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -86,21 +112,43 @@ class PlanController {
     }
 
     const findMembershipById = await Membership.findByPk(
-      req.params.membership_id
+      req.params.membership_id,
+      {
+        include: [
+          {
+            model: Student,
+            as: 'student',
+            attributes: ['name', 'email'],
+          },
+          {
+            model: Plan,
+            as: 'plan',
+            attributes: ['title', 'symbol', 'duration', 'price'],
+          },
+        ],
+      }
     );
+
+    if (!findMembershipById) {
+      return res.status(400).json({ error: 'Membership not found.' });
+    }
 
     if (!req.body.start_date) {
       await findMembershipById.update({
         plan_id: req.body.plan_id,
+        temp_plan_id: req.body.plan_id,
       });
     } else {
       await findMembershipById.update({
         plan_id: req.body.plan_id,
+        temp_plan_id: req.body.plan_id,
         start_date: req.body.start_date,
       });
     }
 
-    // email to student informing change
+    await Queue.add(MembershipUpdateMail.key, {
+      findMembershipById,
+    });
 
     return res.json(findMembershipById);
   }
@@ -113,11 +161,32 @@ class PlanController {
     }
 
     const findMembershipById = await Membership.findByPk(
-      req.params.membership_id
+      req.params.membership_id,
+      {
+        include: [
+          {
+            model: Student,
+            as: 'student',
+            attributes: ['name', 'email'],
+          },
+          {
+            model: Plan,
+            as: 'plan',
+            attributes: ['title', 'symbol', 'duration', 'price'],
+          },
+        ],
+      }
     );
+
+    if (!findMembershipById) {
+      return res.status(400).json({ error: 'Membership not found.' });
+    }
+
     await findMembershipById.destroy();
 
-    // email to student informing cancellation
+    await Queue.add(MembershipCancellationMail.key, {
+      findMembershipById,
+    });
 
     return res.json(findMembershipById);
   }

@@ -13,6 +13,10 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      symbol: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       duration: {
         type: Sequelize.INTEGER,
         allowNull: false,
