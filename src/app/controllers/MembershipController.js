@@ -11,7 +11,20 @@ import Queue from '../../lib/Queue';
 
 class PlanController {
   async index(req, res) {
-    const memberships = await Membership.findAll();
+    const memberships = await Membership.findAll({
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'symbol', 'duration', 'price'],
+        },
+      ],
+    });
 
     return res.json(memberships);
   }
@@ -25,6 +38,13 @@ class PlanController {
 
     const studentMemberships = await Membership.findAll({
       where: { student_id: req.params.student_id },
+      include: [
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'symbol', 'duration', 'price'],
+        },
+      ],
     });
 
     return res.json(studentMemberships);
@@ -111,7 +131,7 @@ class PlanController {
       return res.status(400).json({ error: 'Plan not found.' });
     }
 
-    const findMembershipById = await Membership.findByPk(
+    let findMembershipById = await Membership.findByPk(
       req.params.membership_id,
       {
         include: [
@@ -145,6 +165,21 @@ class PlanController {
         start_date: req.body.start_date,
       });
     }
+
+    findMembershipById = await Membership.findByPk(findMembershipById.id, {
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'symbol', 'duration', 'price'],
+        },
+      ],
+    });
 
     await Queue.add(MembershipUpdateMail.key, {
       findMembershipById,
