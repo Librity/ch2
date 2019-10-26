@@ -19,7 +19,7 @@ routes.put('/users', UserController.updateSelf);
 routes.get('/users/:id', UserController.show);
 
 routes.get('/students', StudentController.index);
-routes.get('/students/:id', StudentController.show);
+routes.get('/students/:student_id', StudentController.show);
 
 routes.use(isAdminMiddleware);
 routes.post('/users', UserController.create);
@@ -27,13 +27,13 @@ routes.put('/users/:id', UserController.update);
 routes.delete('/users/:id', UserController.destroy);
 
 routes.post('/students', StudentController.create);
-routes.put('/students/:id', StudentController.update);
-routes.delete('/students/:id', StudentController.destroy);
+routes.put('/students/:student_id', StudentController.update);
+routes.delete('/students/:student_id', StudentController.destroy);
 
 routes.get('/plans', PlanController.index);
 routes.post('/plans', PlanController.store);
-routes.put('/plans/:id', PlanController.update);
-routes.delete('/plans/:id', PlanController.destroy);
+routes.put('/plans/:plan_id', PlanController.update);
+routes.delete('/plans/:plan_id', PlanController.destroy);
 
 routes.get('/memberships', MembershipController.index);
 routes.get('/students/:student_id/memberships', MembershipController.show);

@@ -53,17 +53,27 @@ class PlanController {
       return res.status(400).json({ error: 'Title already in use' });
     }
 
-    const plan = await Plan.findByPk(req.params.id);
-    await plan.update(req.body);
+    const findPlanById = await Plan.findByPk(req.params.plan_id);
 
-    return res.json(plan);
+    if (!findPlanById) {
+      return res.status(404).json({ error: 'Plan not found' });
+    }
+
+    await findPlanById.update(req.body);
+
+    return res.json(findPlanById);
   }
 
   async destroy(req, res) {
-    const plan = await Plan.findByPk(req.params.id);
-    await plan.destroy();
+    const findPlanById = await Plan.findByPk(req.params.plan_id);
 
-    return res.json(plan);
+    if (!findPlanById) {
+      return res.status(404).json({ error: 'Plan not found' });
+    }
+
+    await findPlanById.destroy();
+
+    return res.json(findPlanById);
   }
 }
 

@@ -22,7 +22,7 @@ class Membership extends Model {
       const { duration, price } = await Plan.findByPk(membership.plan_id);
 
       membership.end_date = addMonths(membership.start_date, duration);
-      membership.price = duration * price;
+      membership.price = Math.round(duration * price * 1e2) / 1e2;
     });
 
     return this;

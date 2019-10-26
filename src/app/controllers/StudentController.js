@@ -10,9 +10,7 @@ class StudentController {
   }
 
   async show(req, res) {
-    const findStudentById = await Student.findOne({
-      where: { id: req.params.id },
-    });
+    const findStudentById = await Student.findByPk(req.params.student_id);
 
     if (!findStudentById) {
       return res.status(404).json({ error: 'Student not found' });
@@ -88,13 +86,13 @@ class StudentController {
 
     let { email } = req.body;
 
-    const student = await Student.findByPk(req.params.id);
+    const findStudentById = await Student.findByPk(req.params.student_id);
 
-    if (!student) {
-      return res.status(404).json({ error: 'User not found.' });
+    if (!findStudentById) {
+      return res.status(404).json({ error: 'Student not found' });
     }
 
-    if (email && email !== student.email) {
+    if (email && email !== findStudentById.email) {
       const studentExists = await Student.findOne({
         where: { email },
       });
@@ -103,7 +101,7 @@ class StudentController {
         return res.status(400).json({ error: 'Email already in use.' });
       }
     } else {
-      email = student.email;
+      email = findStudentById.email;
     }
 
     const {
@@ -115,7 +113,7 @@ class StudentController {
       weight_imperial,
       height_metric,
       height_imperial,
-    } = await student.update(req.body);
+    } = await findStudentById.update(req.body);
 
     return res.json({
       id,
@@ -131,15 +129,15 @@ class StudentController {
   }
 
   async destroy(req, res) {
-    const student = await Student.findByPk(req.params.id);
+    const findStudentById = await Student.findByPk(req.params.student_id);
 
-    if (!student) {
-      return res.status(404).json({ erro: 'Student not found.' });
+    if (!findStudentById) {
+      return res.status(404).json({ error: 'Student not found' });
     }
 
-    await Student.destroy({ where: { id: req.params.id } });
+    await findStudentById.destroy();
 
-    return res.json(student);
+    return res.json(findStudentById);
   }
 }
 
