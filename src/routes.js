@@ -4,6 +4,7 @@ import UserController from './app/controllers/UserController';
 import SessionsController from './app/controllers/SessionController';
 import StudentController from './app/controllers/StudentController';
 import PlanController from './app/controllers/PlanController';
+import MembershipController from './app/controllers/MembershipController';
 
 import authMiddleware from './app/middlewares/auth';
 import isAdminMiddleware from './app/middlewares/isAdmin';
@@ -33,5 +34,17 @@ routes.get('/plans', PlanController.index);
 routes.post('/plans', PlanController.store);
 routes.put('/plans/:id', PlanController.update);
 routes.delete('/plans/:id', PlanController.destroy);
+
+routes.get('/memberships', MembershipController.index);
+routes.get('/students/:student_id/memberships', MembershipController.show);
+routes.post('/students/:student_id/memberships', MembershipController.store);
+routes.put(
+  '/students/:student_id/memberships/:membership_id',
+  MembershipController.update
+);
+routes.delete(
+  '/students/:student_id/memberships/:membership_id',
+  MembershipController.destroy
+);
 
 export default routes;
