@@ -1,4 +1,4 @@
-class PlanController {
+class TemplateController {
   async index(req, res) {
     return res.json();
   }
@@ -20,4 +20,4 @@ class PlanController {
   }
 }
 
-export default new PlanController();
+export default new TemplateController();

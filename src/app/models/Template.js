@@ -1,18 +1,18 @@
 import Sequelize, { Model } from 'sequelize';
 
-class Example extends Model {
+class Template extends Model {
   static init(sequelize) {
     super.init(
       {
-        example: Sequelize.TEXT,
+        template: Sequelize.TEXT,
       },
       {
         sequelize,
       }
     );
 
-    this.addHook('beforeSave', async example => {
-      return example;
+    this.addHook('beforeSave', async template => {
+      return template;
     });
 
     return this;
@@ -23,4 +23,4 @@ class Example extends Model {
   }
 }
 
-export default Example;
+export default Template;

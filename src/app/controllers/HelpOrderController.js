@@ -1,23 +1,65 @@
-class PlanController {
+import * as Yup from 'yup';
+
+import HelpOrder from '../models/HelpOrder';
+import Student from '../models/Student';
+
+class HelpOrderController {
   async index(req, res) {
-    return res.json();
+    const { unanswered = true } = req.query;
+    const where = { answer: null };
+    let helpOrders;
+
+    if (unanswered) {
+      helpOrders = await HelpOrder.findAll({ where });
+    } else {
+      helpOrders = await HelpOrder.findAll();
+    }
+
+    return res.json(helpOrders);
   }
 
   async show(req, res) {
-    return res.json();
+    const findStudentById = await Student.findByPk(req.params.student_id);
+
+    if (!findStudentById) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const { unanswered = true } = req.query;
+    const where = { answer: null };
+    let helpOrders;
+
+    if (unanswered) {
+      helpOrders = await HelpOrder.findAll({ where });
+    } else {
+      helpOrders = await HelpOrder.findAll();
+    }
+
+    return res.json(helpOrders);
   }
 
   async store(req, res) {
-    return res.json();
-  }
+    const schema = Yup.object().shape({
+      question: Yup.string().required(),
+    });
 
-  async update(req, res) {
-    return res.json();
-  }
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed.' });
+    }
 
-  async destroy(req, res) {
-    return res.json();
+    const findStudentById = await Student.findByPk(req.params.student_id);
+
+    if (!findStudentById) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const newHelpOrder = await HelpOrder.create({
+      student_id: req.params.student_id,
+      question: req.body.question,
+    });
+
+    return res.json(newHelpOrder);
   }
 }
 
-export default new PlanController();
+export default new HelpOrderController();

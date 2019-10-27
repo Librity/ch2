@@ -7,6 +7,7 @@ import PlanController from './app/controllers/PlanController';
 import MembershipController from './app/controllers/MembershipController';
 import CheckinController from './app/controllers/CheckinController';
 import HelpOrderController from './app/controllers/HelpOrderController';
+import AnswerController from './app/controllers/AnswerController';
 
 import authMiddleware from './app/middlewares/auth';
 import isAdminMiddleware from './app/middlewares/isAdmin';
@@ -27,13 +28,17 @@ routes.get('/checkins', CheckinController.index);
 routes.get('/students/:student_id/checkins', CheckinController.show);
 routes.post('/students/:student_id/checkins', CheckinController.store);
 
-routes.get('/help-orders', HelpOrderController.index);
-routes.get('/students/:student_id/help-orders', HelpOrderController.show);
-routes.post('/students/:student_id/help-orders', HelpOrderController.store);
+routes.get('/help_orders', HelpOrderController.index);
+routes.get('/students/:student_id/help_orders', HelpOrderController.show);
+routes.post('/students/:student_id/help_orders', HelpOrderController.store);
 
+routes.get(
+  '/students/:student_id/help_orders/:help_order_id',
+  AnswerController.show
+);
 routes.post(
-  '/students/:student_id/help-orders/:help-order_id/answer',
-  HelpOrderController.store
+  '/students/:student_id/help_orders/:help_order_id/answer',
+  AnswerController.store
 );
 
 routes.use(isAdminMiddleware);

@@ -3,12 +3,15 @@ import Bee from 'bee-queue';
 import MembershipUpdateMail from '../app/jobs/MembershipUpdateMail';
 import MembershipCreationMail from '../app/jobs/MembershipCreationMail';
 import MembershipCancellationMail from '../app/jobs/MembershipCancellationMail';
+import HelpOrderAnsweredMail from '../app/jobs/HelpOrderAnsweredMail';
+
 import redisConfig from '../config/redis';
 
 const jobs = [
   MembershipCreationMail,
   MembershipUpdateMail,
   MembershipCancellationMail,
+  HelpOrderAnsweredMail,
 ];
 
 class Queue {

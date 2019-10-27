@@ -5,7 +5,7 @@ class HelpOrder extends Model {
     super.init(
       {
         question: Sequelize.TEXT,
-        answer: Sequelize.DATE,
+        answer: Sequelize.TEXT,
         answered_at: Sequelize.DATE,
       },
       {
