@@ -6,6 +6,7 @@ import StudentController from './app/controllers/StudentController';
 import PlanController from './app/controllers/PlanController';
 import MembershipController from './app/controllers/MembershipController';
 import CheckinController from './app/controllers/CheckinController';
+import HelpOrderController from './app/controllers/HelpOrderController';
 
 import authMiddleware from './app/middlewares/auth';
 import isAdminMiddleware from './app/middlewares/isAdmin';
@@ -25,6 +26,15 @@ routes.get('/students/:student_id', StudentController.show);
 routes.get('/checkins', CheckinController.index);
 routes.get('/students/:student_id/checkins', CheckinController.show);
 routes.post('/students/:student_id/checkins', CheckinController.store);
+
+routes.get('/help-orders', HelpOrderController.index);
+routes.get('/students/:student_id/help-orders', HelpOrderController.show);
+routes.post('/students/:student_id/help-orders', HelpOrderController.store);
+
+routes.post(
+  '/students/:student_id/help-orders/:help-order_id/answer',
+  HelpOrderController.store
+);
 
 routes.use(isAdminMiddleware);
 routes.post('/users', UserController.create);
