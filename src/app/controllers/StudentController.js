@@ -12,7 +12,7 @@ class StudentController {
       getAllStudents = await Student.findAll({
         where: {
           name: {
-            [Op.iRegexp]: `^${name}`,
+            [Op.iRegexp]: `${name}`,
           },
         },
       });
