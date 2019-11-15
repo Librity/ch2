@@ -1,10 +1,24 @@
+import { Op } from 'sequelize';
 import * as Yup from 'yup';
 
 import Student from '../models/Student';
 
 class StudentController {
   async index(req, res) {
-    const getAllStudents = await Student.findAll();
+    let getAllStudents;
+    const { name } = req.query;
+
+    if (name) {
+      getAllStudents = await Student.findAll({
+        where: {
+          name: {
+            [Op.iRegexp]: `^${name}`,
+          },
+        },
+      });
+    } else {
+      getAllStudents = await Student.findAll();
+    }
 
     return res.json(getAllStudents);
   }
