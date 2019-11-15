@@ -9,9 +9,10 @@ import MembershipUpdateMail from '../jobs/MembershipUpdateMail';
 import MembershipCancellationMail from '../jobs/MembershipCancellationMail';
 import Queue from '../../lib/Queue';
 
-class PlanController {
+class MembershipController {
   async index(req, res) {
     const memberships = await Membership.findAll({
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       include: [
         {
           model: Student,
@@ -37,6 +38,7 @@ class PlanController {
     }
 
     const studentMemberships = await Membership.findAll({
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       where: { student_id: req.params.student_id },
       include: [
         {
@@ -84,6 +86,7 @@ class PlanController {
     });
 
     newMembership = await Membership.findByPk(newMembership.id, {
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       where: {
         student_id: req.params.student_id,
         plan_id: req.body.plan_id,
@@ -167,6 +170,7 @@ class PlanController {
     }
 
     findMembershipById = await Membership.findByPk(findMembershipById.id, {
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       include: [
         {
           model: Student,
@@ -227,4 +231,4 @@ class PlanController {
   }
 }
 
-export default new PlanController();
+export default new MembershipController();

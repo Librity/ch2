@@ -4,7 +4,7 @@ import { Op } from 'sequelize';
 import Checkin from '../models/Checkin';
 import Student from '../models/Student';
 
-class PlanController {
+class CheckinController {
   async index(req, res) {
     const { page = 1 } = req.query;
     const { requestsPerPage = 20 } = req.query;
@@ -78,4 +78,4 @@ class PlanController {
   }
 }
 
-export default new PlanController();
+export default new CheckinController();
