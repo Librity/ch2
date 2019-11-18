@@ -6,7 +6,13 @@
 
 <h3 align="center">
   Desafio 2: Gympoint, o início
+</h3>
+
+<h3 align="center">
   Desafio 3: Gympoint, continuação
+</h3>
+
+<h3 align="center">
   Desafio 9: Gympoint, front-end web
 </h3>
 
@@ -65,26 +71,26 @@ yarn sequelize seed:generate --name admin-user
 No arquivo gerado na pasta `src/database/seeds` adicione o código referente à criação de um usuário administrador:
 
 ```js
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 
 module.exports = {
   up: QueryInterface => {
     return QueryInterface.bulkInsert(
-      "users",
+      'users',
       [
         {
-          name: "Administrador",
-          email: "admin@gympoint.com",
-          password_hash: bcrypt.hashSync("123456", 8),
+          name: 'Administrador',
+          email: 'admin@gympoint.com',
+          password_hash: bcrypt.hashSync('123456', 8),
           created_at: new Date(),
-          updated_at: new Date()
-        }
+          updated_at: new Date(),
+        },
       ],
       {}
     );
   },
 
-  down: () => {}
+  down: () => {},
 };
 ```
 
@@ -116,6 +122,7 @@ Antes de iniciar a parte web, **adicione as seguintes funcionalidades no back-en
 1. Adicione um campo boolean `true/false` na listagem de matrículas indicando se a matrícula está ativa ou não, ou seja, se a data de término é posterior à atual e a data de início inferior (utilize um campo `VIRTUAL`).
 
 Por exemplo, no model de Matrícula, adicione um novo campo:
+
 ```js
 active: {
   type: Sequelize.VIRTUAL(Sequelize.BOOLEAN, [
@@ -250,7 +257,6 @@ Crie uma rota para a academia responder um pedido de auxílio:
 Exemplo de requisição: `POST https://gympoint.com/help-orders/1/answer`
 
 Quando um pedido de auxílio for respondido, o aluno deve receber um e-mail da plataforma com a pergunta e resposta da academia;
-
 
 ## 📅 Entrega
 

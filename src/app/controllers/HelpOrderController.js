@@ -10,7 +10,16 @@ class HelpOrderController {
     let helpOrders;
 
     if (unanswered) {
-      helpOrders = await HelpOrder.findAll({ where });
+      helpOrders = await HelpOrder.findAll({
+        where,
+        include: [
+          {
+            model: Student,
+            as: 'student',
+            attributes: ['id', 'name', 'email'],
+          },
+        ],
+      });
     } else {
       helpOrders = await HelpOrder.findAll();
     }

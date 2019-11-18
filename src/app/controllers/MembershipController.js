@@ -17,7 +17,7 @@ class MembershipController {
         {
           model: Student,
           as: 'student',
-          attributes: ['name', 'email'],
+          attributes: ['id', 'name', 'email'],
         },
         {
           model: Plan,
