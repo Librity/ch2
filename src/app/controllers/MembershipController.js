@@ -22,7 +22,14 @@ class MembershipController {
         {
           model: Plan,
           as: 'plan',
-          attributes: ['title', 'symbol', 'duration', 'price'],
+          attributes: [
+            'id',
+            'title',
+            'symbol',
+            'duration',
+            'price',
+            'total_price',
+          ],
         },
       ],
     });
@@ -163,6 +170,89 @@ class MembershipController {
       });
     } else {
       await findMembershipById.update({
+        plan_id: req.body.plan_id,
+        temp_plan_id: req.body.plan_id,
+        start_date: req.body.start_date,
+      });
+    }
+
+    findMembershipById = await Membership.findByPk(findMembershipById.id, {
+      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'symbol', 'duration', 'price'],
+        },
+      ],
+    });
+
+    await Queue.add(MembershipUpdateMail.key, {
+      findMembershipById,
+    });
+
+    return res.json(findMembershipById);
+  }
+
+  async transfer(req, res) {
+    const schema = Yup.object().shape({
+      student_id: Yup.number().required(),
+      plan_id: Yup.number(),
+      start_date: Yup.date(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed.' });
+    }
+
+    const findStudentById = await Student.findByPk(req.body.student_id);
+
+    if (!findStudentById) {
+      return res.status(400).json({ error: 'Student not found.' });
+    }
+
+    const findPlanById = await Plan.findByPk(req.body.plan_id);
+
+    if (!findPlanById) {
+      return res.status(400).json({ error: 'Plan not found.' });
+    }
+
+    let findMembershipById = await Membership.findByPk(
+      req.params.membership_id,
+      {
+        include: [
+          {
+            model: Student,
+            as: 'student',
+            attributes: ['name', 'email'],
+          },
+          {
+            model: Plan,
+            as: 'plan',
+            attributes: ['title', 'symbol', 'duration', 'price'],
+          },
+        ],
+      }
+    );
+
+    if (!findMembershipById) {
+      return res.status(400).json({ error: 'Membership not found.' });
+    }
+
+    if (!req.body.start_date) {
+      await findMembershipById.update({
+        student_id: req.body.student_id,
+        plan_id: req.body.plan_id,
+        temp_plan_id: req.body.plan_id,
+      });
+    } else {
+      await findMembershipById.update({
+        student_id: req.body.student_id,
         plan_id: req.body.plan_id,
         temp_plan_id: req.body.plan_id,
         start_date: req.body.start_date,

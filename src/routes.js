@@ -66,5 +66,6 @@ routes.delete(
   '/students/:student_id/memberships/:membership_id',
   MembershipController.destroy
 );
+routes.put('/memberships/:membership_id', MembershipController.transfer);
 
 export default routes;
