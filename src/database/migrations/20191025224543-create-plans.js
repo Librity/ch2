@@ -17,11 +17,16 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+
       duration: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
       price: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
+      total_price: {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
