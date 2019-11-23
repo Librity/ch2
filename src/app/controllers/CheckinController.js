@@ -10,7 +10,7 @@ class CheckinController {
     const { requestsPerPage = 20 } = req.query;
 
     const checkins = await Checkin.findAll({
-      order: ['updated_at'],
+      order: [['updated_at', 'DESC']],
       limit: requestsPerPage,
       offset: (page - 1) * requestsPerPage,
       include: [
@@ -36,7 +36,7 @@ class CheckinController {
     const { requestsPerPage = 20 } = req.query;
 
     const studentCheckins = await Checkin.findAll({
-      order: ['updated_at'],
+      order: [['updated_at', 'DESC']],
       limit: requestsPerPage,
       offset: (page - 1) * requestsPerPage,
       where: { student_id: req.params.student_id },

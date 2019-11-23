@@ -12,6 +12,7 @@ class HelpOrderController {
 
     if (unanswered === 'true') {
       helpOrders = await HelpOrder.findAll({
+        order: [['updated_at', 'DESC']],
         where,
         include: [
           {
@@ -23,6 +24,7 @@ class HelpOrderController {
       });
     } else {
       helpOrders = await HelpOrder.findAll({
+        order: [['updated_at', 'DESC']],
         include: [
           {
             model: Student,
@@ -49,9 +51,12 @@ class HelpOrderController {
     let helpOrders;
 
     if (unanswered === 'true') {
-      helpOrders = await HelpOrder.findAll({ where });
+      helpOrders = await HelpOrder.findAll({
+        order: [['updated_at', 'DESC']],
+        where,
+      });
     } else {
-      helpOrders = await HelpOrder.findAll();
+      helpOrders = await HelpOrder.findAll({ order: [['updated_at', 'DESC']] });
     }
 
     return res.json(helpOrders);
