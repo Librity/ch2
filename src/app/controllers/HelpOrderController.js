@@ -6,10 +6,11 @@ import Student from '../models/Student';
 class HelpOrderController {
   async index(req, res) {
     const { unanswered = true } = req.query;
+
     const where = { answer: null };
     let helpOrders;
 
-    if (unanswered) {
+    if (unanswered === 'true') {
       helpOrders = await HelpOrder.findAll({
         where,
         include: [
@@ -21,7 +22,15 @@ class HelpOrderController {
         ],
       });
     } else {
-      helpOrders = await HelpOrder.findAll();
+      helpOrders = await HelpOrder.findAll({
+        include: [
+          {
+            model: Student,
+            as: 'student',
+            attributes: ['id', 'name', 'email'],
+          },
+        ],
+      });
     }
 
     return res.json(helpOrders);
@@ -35,10 +44,11 @@ class HelpOrderController {
     }
 
     const { unanswered = true } = req.query;
+
     const where = { answer: null };
     let helpOrders;
 
-    if (unanswered) {
+    if (unanswered === 'true') {
       helpOrders = await HelpOrder.findAll({ where });
     } else {
       helpOrders = await HelpOrder.findAll();

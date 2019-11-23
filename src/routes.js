@@ -16,12 +16,6 @@ const routes = new Router();
 
 routes.post('/sessions', SessionsController.store);
 
-routes.use(authMiddleware);
-routes.get('/users', UserController.index);
-routes.put('/users', UserController.updateSelf);
-routes.get('/users/:id', UserController.show);
-
-routes.get('/students', StudentController.index);
 routes.get('/students/:student_id', StudentController.show);
 
 routes.get('/checkins', CheckinController.index);
@@ -31,11 +25,18 @@ routes.post('/students/:student_id/checkins', CheckinController.store);
 routes.get('/help_orders', HelpOrderController.index);
 routes.get('/students/:student_id/help_orders', HelpOrderController.show);
 routes.post('/students/:student_id/help_orders', HelpOrderController.store);
-
 routes.get(
   '/students/:student_id/help_orders/:help_order_id',
   AnswerController.show
 );
+
+routes.use(authMiddleware);
+routes.get('/users', UserController.index);
+routes.put('/users', UserController.updateSelf);
+routes.get('/users/:id', UserController.show);
+
+routes.get('/students', StudentController.index);
+
 routes.post(
   '/students/:student_id/help_orders/:help_order_id/answer',
   AnswerController.store
