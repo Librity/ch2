@@ -45,18 +45,24 @@ class HelpOrderController {
       return res.status(404).json({ error: 'Student not found' });
     }
 
-    const { unanswered = true } = req.query;
-
-    const where = { answer: null };
+    const { unanswered = true } = req.query;  
     let helpOrders;
 
     if (unanswered === 'true') {
       helpOrders = await HelpOrder.findAll({
         order: [['updated_at', 'DESC']],
-        where,
+        where: {
+          answer: null,
+          student_id: req.params.student_id,
+        },
       });
     } else {
-      helpOrders = await HelpOrder.findAll({ order: [['updated_at', 'DESC']] });
+      helpOrders = await HelpOrder.findAll({
+        order: [['updated_at', 'DESC']],
+        where: {
+          student_id: req.params.student_id,
+        },
+      });
     }
 
     return res.json(helpOrders);
