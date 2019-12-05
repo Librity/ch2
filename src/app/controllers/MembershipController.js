@@ -11,7 +11,15 @@ import Queue from '../../lib/Queue';
 
 class MembershipController {
   async index(req, res) {
+    const { page = 1, requestsPerPage = 20 } = req.query;
+    const pagination = {
+      order: [['id', 'ASC']],
+      limit: requestsPerPage,
+      offset: (page - 1) * requestsPerPage,
+    };
+
     const memberships = await Membership.findAll({
+      ...pagination,
       attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       include: [
         {

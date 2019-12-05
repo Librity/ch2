@@ -6,10 +6,16 @@ import Student from '../models/Student';
 class StudentController {
   async index(req, res) {
     let getAllStudents;
-    const { name } = req.query;
+    const { name, page = 1, requestsPerPage = 20 } = req.query;
+    const pagination = {
+      order: [['name', 'ASC']],
+      limit: requestsPerPage,
+      offset: (page - 1) * requestsPerPage,
+    };
 
     if (name) {
       getAllStudents = await Student.findAll({
+        ...pagination,
         where: {
           name: {
             [Op.iRegexp]: `${name}`,
@@ -17,7 +23,7 @@ class StudentController {
         },
       });
     } else {
-      getAllStudents = await Student.findAll();
+      getAllStudents = await Student.findAll(pagination);
     }
 
     return res.json(getAllStudents);

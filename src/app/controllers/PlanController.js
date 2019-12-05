@@ -5,7 +5,14 @@ import Plan from '../models/Plan';
 
 class PlanController {
   async index(req, res) {
-    const plans = await Plan.findAll();
+    const { page = 1, requestsPerPage = 20 } = req.query;
+    const pagination = {
+      order: [['id', 'ASC']],
+      limit: requestsPerPage,
+      offset: (page - 1) * requestsPerPage,
+    };
+
+    const plans = await Plan.findAll(pagination);
 
     return res.json(plans);
   }
