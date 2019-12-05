@@ -13,7 +13,7 @@ class MembershipController {
   async index(req, res) {
     const { page = 1, requestsPerPage = 20 } = req.query;
     const pagination = {
-      order: [['id', 'ASC']],
+      order: [['end_date', 'DESC']],
       limit: requestsPerPage,
       offset: (page - 1) * requestsPerPage,
     };
