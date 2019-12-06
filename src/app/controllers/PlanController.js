@@ -12,7 +12,7 @@ class PlanController {
       offset: (page - 1) * requestsPerPage,
     };
 
-    const plans = await Plan.findAll(pagination);
+    const plans = await Plan.findAndCountAll(pagination);
 
     return res.json(plans);
   }

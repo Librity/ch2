@@ -16,7 +16,7 @@ class HelpOrderController {
     let helpOrders;
 
     if (unanswered === 'true') {
-      helpOrders = await HelpOrder.findAll({
+      helpOrders = await HelpOrder.findAndCountAll({
         ...pagination,
         where,
         include: [
@@ -28,7 +28,7 @@ class HelpOrderController {
         ],
       });
     } else {
-      helpOrders = await HelpOrder.findAll({
+      helpOrders = await HelpOrder.findAndCountAll({
         ...pagination,
         include: [
           {

@@ -18,7 +18,7 @@ class MembershipController {
       offset: (page - 1) * requestsPerPage,
     };
 
-    const memberships = await Membership.findAll({
+    const memberships = await Membership.findAndCountAll({
       ...pagination,
       attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       include: [

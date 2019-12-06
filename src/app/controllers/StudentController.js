@@ -14,7 +14,7 @@ class StudentController {
     };
 
     if (name) {
-      getAllStudents = await Student.findAll({
+      getAllStudents = await Student.findAndCountAll({
         ...pagination,
         where: {
           name: {
@@ -23,7 +23,7 @@ class StudentController {
         },
       });
     } else {
-      getAllStudents = await Student.findAll(pagination);
+      getAllStudents = await Student.findAndCountAll(pagination);
     }
 
     return res.json(getAllStudents);
